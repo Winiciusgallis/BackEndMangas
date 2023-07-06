@@ -11,7 +11,7 @@ app.use(express.json());
 app.use('/mangas', routeManga);
 app.use('/capitulos',capitulos)
 app.use('/imagens',imagens)
-
+//teste
 
 app.use(errorMiddleware)
 
