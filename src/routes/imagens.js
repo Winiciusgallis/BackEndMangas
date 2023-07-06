@@ -28,29 +28,35 @@ route.post('/',validateImagens, async (req, res) => {
   
     res.status(201).json(newP);
   })
-  route.put('/:id',validateImagens,async (req, res) => {
-    const { pag_num, imag_url,cap_id} = req.body;
-    const {id} = req.params;
-
-    const [[result]] = await connection.execute('SELECT * FROM imagens WHERE id =?',[id]);
-
-    if(!result) {
-      res.status(404).json({ message: 'imagem não encontrado!!!'})
+  route.put('/:id', validateImagens, async (req, res) => {
+    const { pag_num, imag_url, cap_id } = req.body;
+    const { id } = req.params;
+  
+    // Verificar se o valor de pag_num é um número válido
+    if (isNaN(pag_num)) {
+      return res.status(400).json({ message: '"pag_num" must be a number' });
     }
-
-    const updateManga = await connection.execute(`UPDATE imagens 
-    SET pag_num = ?, imag_url = ? ,cap_id = ?
-    WHERE id = ?`, [ pag_num, imag_url,cap_id, id])
-
+  
+    const [[result]] = await connection.execute('SELECT * FROM imagens WHERE id = ?', [id]);
+  
+    if (!result) {
+      return res.status(404).json({ message: 'Imagem não encontrada!' });
+    }
+  
+    const updateManga = await connection.execute(
+      `UPDATE imagens SET pag_num = ?, imag_url = ?, cap_id = ? WHERE id = ?`,
+      [pag_num, imag_url, cap_id, id]
+    );
+  
     const newP = {
       id,
       pag_num,
       imag_url,
-      cap_id
-    }
-
+      cap_id,
+    };
+  
     res.status(201).json(newP);
-})
+  });
 route.delete('/:id',async(req,res)=>{
   const{id} = req.params;
 

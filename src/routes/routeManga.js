@@ -31,33 +31,34 @@ route.post('/',validateManga, async (req, res) => {
   
     res.status(201).json(newP);
   })
-  route.put('/:id',validateManga,async (req, res) => {
-    const {nomemanga, synopsis,author,themes,status,genres,capamanga} = req.body;
-    const {id} = req.params;
-
-    const [[result]] = await connection.execute('SELECT * FROM mangas WHERE id =?',[id]);
-
-    if(!result) {
-      res.status(404).json({ message: 'Manga não encontrado!!!'})
+  route.put('/:id', validateManga, async (req, res) => {
+    const { nomemanga, synopsis, author, themes, status, genres, capamanga } = req.body;
+    const { id } = req.params;
+  
+    const [[result]] = await connection.execute('SELECT * FROM mangas WHERE id = ?', [id]);
+  
+    if (!result) {
+      return res.status(404).json({ message: 'Manga não encontrado!!!' });
     }
-
-    const updateManga = await connection.execute(`UPDATE mangas 
-    SET nomemanga = ?, synopsis = ?,author = ?,themes = ?,status = ? ,genres=?,capamanga=?
-    WHERE id = ?`, [nomemanga, synopsis,author,themes,status,genres,capamanga, id])
-
+  
+    await connection.execute(
+      `UPDATE mangas SET nomemanga = ?, synopsis = ?, author = ?, themes = ?, status = ?, genres = ?, capamanga = ? WHERE id = ?`,
+      [nomemanga, synopsis, author, themes, status, genres, capamanga, id]
+    );
+  
     const newP = {
       id,
-      nomemanga, 
+      nomemanga,
       synopsis,
       author,
       themes,
       status,
       genres,
       capamanga
-    }
-
+    };
+  
     res.status(201).json(newP);
-})
+  });
 route.delete('/:id',async(req,res)=>{
   const{id} = req.params;
 
